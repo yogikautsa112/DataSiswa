@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["btn-delete-all"])) {
             <form method="post" class="add-data d-flex justify-content-center flex-column mb-2">
                 <div class="input-container d-flex gap-2">
                     <input class="form-control" type="text" placeholder="Masukan Nama" style="text-align: center;" name="nama" required>
-                    <input class="form-control" type="text" placeholder="Masukan NIS" style="text-align: center;" name="nis" required>
+                    <input class="form-control" type="number" placeholder="Masukan NIS" style="text-align: center;" name="nis" required>
                     <input class="form-control" type="text" placeholder="Masukan Rayon" style="text-align: center;" name="rayon" required>
                 </div>
                 <!-- Add Button -->
