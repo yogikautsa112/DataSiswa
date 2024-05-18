@@ -5,10 +5,9 @@ function is_data_exist($nama, $nis, $rayon) {
     foreach ($_SESSION['data_siswa'] as $siswa) {
         if($siswa['nama'] == $nama && $siswa['nis'] == $nis && $siswa['rayon'] == $rayon) {
             return true;
-        } else {
-            return false;
-        }
+        } 
     }
+    return false;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["btn-submt"])) {
