@@ -1,12 +1,31 @@
 <?php
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["btn-update"])) {
-        $index = $_GET["index"];
-        $nama = $_POST["nama"];
-        $nis = $_POST["nis"];
-        $rayon = $_POST["rayon"];
+function is_data_exist($nama, $nis, $rayon, $exclude_index = null) {
+    foreach ($_SESSION['data_siswa'] as $index => $siswa) {
+        if ($index != $exclude_index && $siswa['nis'] == $nis) {
+            return true;
+        }
+    }
+    return false;
+}
+
+if (!isset($_GET["index"]) || !isset($_SESSION['data_siswa'][$_GET["index"]])) {
+    header("Location: index.php");
+    exit;
+}
+
+$index = $_GET["index"];
+$siswa = $_SESSION['data_siswa'][$index];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["btn-update"])) {
+    $nama = $_POST["nama"];
+    $nis = $_POST["nis"];
+    $rayon = $_POST["rayon"];
+
+    if (is_data_exist($nama, $nis, $rayon, $index)) {
+        $_SESSION['error_message'] = "Data dengan NIS ini sudah ada. Tidak boleh menduplikat.";
+    } else {
         $_SESSION['data_siswa'][$index] = array(
             'nama' => $nama,
             'nis' => $nis,
@@ -16,19 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 }
-if (!isset($_GET["index"])) {
-    header("Location: index.php");
-    exit;
-}
-
-$index = $_GET["index"];
-
-if (!isset($_SESSION['data_siswa'][$index])) { 
-    header("Location: index.php");
-    exit;
-}
-
-$siswa = $_SESSION['data_siswa'][$index];
 ?>
 
 <!DOCTYPE html>
@@ -43,18 +49,24 @@ $siswa = $_SESSION['data_siswa'][$index];
 <body>
     <div class="container">
         <h2 class="text-center mt-4">Edit Data Siswa</h2>
+        <?php
+        if (isset($_SESSION['error_message'])) {
+            echo '<div class="alert alert-danger">' . $_SESSION['error_message'] . '</div>';
+            unset($_SESSION['error_message']);
+        }
+        ?>
         <form method="post">
             <div class="form-group">
                 <label for="nama">Nama:</label>
-                <input type="text" class="form-control" id="nama" name="nama" value="<?php echo $siswa['nama']; ?>">
+                <input type="text" class="form-control" id="nama" name="nama" value="<?php echo htmlspecialchars($siswa['nama']); ?>" required>
             </div>
             <div class="form-group">
                 <label for="nis">NIS:</label>
-                <input type="text" class="form-control" id="nis" name="nis" value="<?php echo $siswa['nis']; ?>">
+                <input type="text" class="form-control" id="nis" name="nis" value="<?php echo htmlspecialchars($siswa['nis']); ?>" required>
             </div>
             <div class="form-group">
                 <label for="rayon">Rayon:</label>
-                <input type="text" class="form-control" id="rayon" name="rayon" value="<?php echo $siswa['rayon']; ?>">
+                <input type="text" class="form-control" id="rayon" name="rayon" value="<?php echo htmlspecialchars($siswa['rayon']); ?>" required>
             </div>
             <button type="submit" class="btn btn-primary" name="btn-update">Update</button>
             <a href="index.php" class="btn btn-secondary">Batal</a>
